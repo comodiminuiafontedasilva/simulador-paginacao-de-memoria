@@ -99,6 +99,24 @@ int acessar_memoria(Simulador *sim, int pid, int endereco_virtual) {
     return endereco_fisico;
 }
 
+void exibir_memoria_fisica(Simulador *sim) {
+    printf("\nEstado da Memória Física:\n");
+    for (int i = 0; i < sim->memoria.num_frames; i++) {
+        printf("--------\n");
+        int valor = sim->memoria.frames[i];
+        int pid = valor >> 16;
+        int pagina = valor & 0xFFFF;
+
+        if (pid == -1) {
+            printf("| ---- |\n");
+        } else {
+            printf("| P%d-%d |\n", pid, pagina);
+        }
+    }
+    printf("--------\n\n");
+}
+
+
 
 
 

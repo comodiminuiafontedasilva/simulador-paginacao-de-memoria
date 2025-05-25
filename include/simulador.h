@@ -24,5 +24,7 @@ int traduzir_endereco(Simulador *sim, int pid, int endereco_virtual);
 int carregar_pagina(Simulador *sim, int pid, int pagina);
 int substituir_pagina_fifo(Simulador *sim);
 int acessar_memoria(Simulador *sim, int pid, int endereco_virtual);
+void exibir_memoria_fisica(Simulador *sim);
+
 
 #endif

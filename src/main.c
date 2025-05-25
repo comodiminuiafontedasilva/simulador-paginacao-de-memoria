@@ -35,6 +35,7 @@ int main() {
 
     for (int i = 0; i < n_acessos; i++) {
         acessar_memoria(&sim, 0, acessos[i]);
+        exibir_memoria_fisica(&sim);
         sim.tempo_atual++;
     }
 
