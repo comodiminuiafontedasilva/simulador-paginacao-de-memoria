@@ -27,3 +27,55 @@ int traduzir_endereco(Simulador *sim, int pid, int endereco_virtual) {
     int frame = proc->tabela_paginas[pagina].frame;
     return frame * sim->tamanho_pagina + deslocamento;
 }
+
+int carregar_pagina(Simulador *sim, int pid, int pagina) {
+    // Procura por um frame livre
+    for (int i = 0; i < sim->memoria.num_frames; i++) {
+        if ((sim->memoria.frames[i] >> 16) == -1) { // frame vazio
+            sim->memoria.frames[i] = (pid << 16) | pagina;
+            sim->memoria.tempo_carga[i] = sim->tempo_atual;
+
+            Processo *proc = &sim->processos[pid];
+            proc->tabela_paginas[pagina].presente = 1;
+            proc->tabela_paginas[pagina].frame = i;
+            proc->tabela_paginas[pagina].tempo_carga = sim->tempo_atual;
+
+            return i;
+        }
+    }
+
+    // Se não houver espaço, substitui com FIFO
+    int frame_substituido = substituir_pagina_fifo(sim);
+
+    int pid_antigo = sim->memoria.frames[frame_substituido] >> 16;
+    int pagina_antiga = sim->memoria.frames[frame_substituido] & 0xFFFF;
+
+    sim->processos[pid_antigo].tabela_paginas[pagina_antiga].presente = 0;
+    sim->processos[pid_antigo].tabela_paginas[pagina_antiga].frame = -1;
+
+    sim->memoria.frames[frame_substituido] = (pid << 16) | pagina;
+    sim->memoria.tempo_carga[frame_substituido] = sim->tempo_atual;
+
+    sim->processos[pid].tabela_paginas[pagina].presente = 1;
+    sim->processos[pid].tabela_paginas[pagina].frame = frame_substituido;
+    sim->processos[pid].tabela_paginas[pagina].tempo_carga = sim->tempo_atual;
+
+    return frame_substituido;
+}
+
+int substituir_pagina_fifo(Simulador *sim) {
+    int mais_antigo = sim->tempo_atual + 1;
+    int frame_escolhido = -1;
+
+    for (int i = 0; i < sim->memoria.num_frames; i++) {
+        if (sim->memoria.tempo_carga[i] < mais_antigo) {
+            mais_antigo = sim->memoria.tempo_carga[i];
+            frame_escolhido = i;
+        }
+    }
+
+    return frame_escolhido;
+}
+
+
+

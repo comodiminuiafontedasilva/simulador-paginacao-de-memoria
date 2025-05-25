@@ -1,6 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
-
+#include <stdlib.h>
 #include "../include/simulador.h"
 #include "../include/processo.h"
 #include "../include/memoria_fisica.h"
@@ -15,42 +14,47 @@ int main() {
     sim.page_faults = 0;
     sim.algoritmo = 0;
 
-    // memória física (4 frames)
     sim.memoria.num_frames = sim.tamanho_memoria_fisica / sim.tamanho_pagina;
-    sim.memoria.frames = calloc(sim.memoria.num_frames, sizeof(int));
-    sim.memoria.tempo_carga = calloc(sim.memoria.num_frames, sizeof(int));
+    sim.memoria.frames = malloc(sizeof(int) * sim.memoria.num_frames);
+    sim.memoria.tempo_carga = malloc(sizeof(int) * sim.memoria.num_frames);
 
-    // 1 processo com 2 páginas (8KB)
+    for (int i = 0; i < sim.memoria.num_frames; i++) {
+        sim.memoria.frames[i] = (-1 << 16);
+        sim.memoria.tempo_carga[i] = -1;
+    }
+
     sim.num_processos = 1;
     sim.processos = malloc(sizeof(Processo));
     sim.processos[0].pid = 0;
-    sim.processos[0].tamanho = 8192;
-    sim.processos[0].num_paginas = sim.processos[0].tamanho / sim.tamanho_pagina;
-    sim.processos[0].tabela_paginas = calloc(sim.processos[0].num_paginas, sizeof(Pagina));
+    sim.processos[0].tamanho = 5 * sim.tamanho_pagina;
+    sim.processos[0].num_paginas = 5;
+    sim.processos[0].tabela_paginas = calloc(5, sizeof(Pagina));
 
-    // Teste
-    int endereco_virtual = 6000;
-    int pagina, deslocamento;
-    extrair_pagina_deslocamento(&sim, endereco_virtual, &pagina, &deslocamento);
+    for (int p = 0; p < 5; p++) {
+        printf("t = %d\n", sim.tempo_atual);
+        printf("Carregando página %d do processo 0\n", p);
+        carregar_pagina(&sim, 0, p);
 
-    printf("Endereço virtual: %d\n", endereco_virtual);
-    printf("Página: %d, Deslocamento: %d\n", pagina, deslocamento);
+        printf("Estado dos frames: ");
+        for (int i = 0; i < sim.memoria.num_frames; i++) {
+            int pid = sim.memoria.frames[i] >> 16;
+            int pag = sim.memoria.frames[i] & 0xFFFF;
+            if (pid == -1) {
+                printf("[----] ");
+            } else {
+                printf("[P%d-%d] ", pid, pag);
+            }
+        }
+        printf("\n\n");
 
-    int presente = verificar_pagina_presente(&sim, 0, pagina);
-    printf("Página presente? %s\n", presente ? "Sim" : "Não");
-
-    int endereco_fisico = traduzir_endereco(&sim, 0, endereco_virtual);
-    if (endereco_fisico == -1) {
-        printf("Page fault detectado ao traduzir endereço!\n");
-    } else {
-        printf("Endereço físico traduzido: %d\n", endereco_fisico);
+        sim.tempo_atual++;
     }
 
     // Liberação de memória
-    free(sim.processos[0].tabela_paginas);
-    free(sim.processos);
     free(sim.memoria.frames);
     free(sim.memoria.tempo_carga);
+    free(sim.processos[0].tabela_paginas);
+    free(sim.processos);
 
     return 0;
 }
