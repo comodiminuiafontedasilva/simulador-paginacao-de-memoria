@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "memoria_fisica.h": "c",
+        "simulador.h": "c"
+    }
+}

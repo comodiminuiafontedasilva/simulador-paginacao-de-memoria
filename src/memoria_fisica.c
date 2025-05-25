@@ -1,5 +1,3 @@
-typedef struct {
-    int num_frames;
-    int *frames;
-    int *tempo_carga;
-} MemoriaFisica;
+#include "../include/simulador.h"
+#include "../include/processo.h"
+#include "../include/memoria_fisica.h"

@@ -1,6 +1,4 @@
-typedef struct {
-    int pid;
-    int tamanho;
-    int num_paginas;
-    Pagina *tabela_paginas;
-} Processo;
+#include "../include/simulador.h"
+#include "../include/processo.h"
+#include "../include/memoria_fisica.h"
+#include "../include/pagina.h"
