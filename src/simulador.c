@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "../include/simulador.h"
 #include "../include/processo.h"
@@ -76,6 +77,28 @@ int substituir_pagina_fifo(Simulador *sim) {
 
     return frame_escolhido;
 }
+
+int acessar_memoria(Simulador *sim, int pid, int endereco_virtual) {
+    sim->total_acessos++;
+
+    int pagina, deslocamento;
+    extrair_pagina_deslocamento(sim, endereco_virtual, &pagina, &deslocamento);
+
+    if (!verificar_pagina_presente(sim, pid, pagina)) {
+        printf("t = %d: [PAGE FAULT] Página %d do Processo %d não está na memória!\n", sim->tempo_atual, pagina, pid);
+        carregar_pagina(sim, pid, pagina);
+        sim->page_faults++;
+    }
+
+    int frame = sim->processos[pid].tabela_paginas[pagina].frame;
+    int endereco_fisico = frame * sim->tamanho_pagina + deslocamento;
+
+    printf("t = %d: Endereço virtual %d (Página %d) -> Endereço físico %d (Frame %d)\n",
+           sim->tempo_atual, endereco_virtual, pagina, endereco_fisico, frame);
+
+    return endereco_fisico;
+}
+
 
 
 

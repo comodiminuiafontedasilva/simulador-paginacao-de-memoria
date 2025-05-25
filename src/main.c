@@ -17,7 +17,6 @@ int main() {
     sim.memoria.num_frames = sim.tamanho_memoria_fisica / sim.tamanho_pagina;
     sim.memoria.frames = malloc(sizeof(int) * sim.memoria.num_frames);
     sim.memoria.tempo_carga = malloc(sizeof(int) * sim.memoria.num_frames);
-
     for (int i = 0; i < sim.memoria.num_frames; i++) {
         sim.memoria.frames[i] = (-1 << 16);
         sim.memoria.tempo_carga[i] = -1;
@@ -30,27 +29,22 @@ int main() {
     sim.processos[0].num_paginas = 5;
     sim.processos[0].tabela_paginas = calloc(5, sizeof(Pagina));
 
-    for (int p = 0; p < 5; p++) {
-        printf("t = %d\n", sim.tempo_atual);
-        printf("Carregando página %d do processo 0\n", p);
-        carregar_pagina(&sim, 0, p);
+    // gerar page faults
+    int acessos[] = {1000, 5000, 9000, 13000, 17000, 1000, 5000};
+    int n_acessos = sizeof(acessos) / sizeof(acessos[0]);
 
-        printf("Estado dos frames: ");
-        for (int i = 0; i < sim.memoria.num_frames; i++) {
-            int pid = sim.memoria.frames[i] >> 16;
-            int pag = sim.memoria.frames[i] & 0xFFFF;
-            if (pid == -1) {
-                printf("[----] ");
-            } else {
-                printf("[P%d-%d] ", pid, pag);
-            }
-        }
-        printf("\n\n");
-
+    for (int i = 0; i < n_acessos; i++) {
+        acessar_memoria(&sim, 0, acessos[i]);
         sim.tempo_atual++;
     }
 
-    // Liberação de memória
+    printf("\n===== ESTATÍSTICAS =====\n");
+    printf("Total de acessos: %d\n", sim.total_acessos);
+    printf("Page faults: %d\n", sim.page_faults);
+    float taxa = 100.0 * sim.page_faults / sim.total_acessos;
+    printf("Taxa de page fault: %.2f%%\n", taxa);
+
+    // Liberação
     free(sim.memoria.frames);
     free(sim.memoria.tempo_carga);
     free(sim.processos[0].tabela_paginas);
