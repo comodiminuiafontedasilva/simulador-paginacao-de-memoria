@@ -4,7 +4,8 @@
 #include "processo.h"
 #include "memoria_fisica.h"
 
-typedef struct {
+typedef struct
+{
     int tempo_atual;
     int tamanho_pagina;
     int tamanho_memoria_fisica;
@@ -25,6 +26,6 @@ int carregar_pagina(Simulador *sim, int pid, int pagina);
 int substituir_pagina_fifo(Simulador *sim);
 int acessar_memoria(Simulador *sim, int pid, int endereco_virtual);
 void exibir_memoria_fisica(Simulador *sim);
-
+int substituir_pagina_random(Simulador *sim);
 
 #endif

@@ -5,19 +5,21 @@
 #include "../include/memoria_fisica.h"
 #include "../include/pagina.h"
 
-int main() {
+int main()
+{
     Simulador sim;
     sim.tamanho_pagina = 4096;
     sim.tamanho_memoria_fisica = 16384;
     sim.tempo_atual = 0;
     sim.total_acessos = 0;
     sim.page_faults = 0;
-    sim.algoritmo = 0;
+    sim.algoritmo = 3;
 
     sim.memoria.num_frames = sim.tamanho_memoria_fisica / sim.tamanho_pagina;
     sim.memoria.frames = malloc(sizeof(int) * sim.memoria.num_frames);
     sim.memoria.tempo_carga = malloc(sizeof(int) * sim.memoria.num_frames);
-    for (int i = 0; i < sim.memoria.num_frames; i++) {
+    for (int i = 0; i < sim.memoria.num_frames; i++)
+    {
         sim.memoria.frames[i] = (-1 << 16);
         sim.memoria.tempo_carga[i] = -1;
     }
@@ -33,7 +35,8 @@ int main() {
     int acessos[] = {1000, 5000, 9000, 13000, 17000, 1000, 5000};
     int n_acessos = sizeof(acessos) / sizeof(acessos[0]);
 
-    for (int i = 0; i < n_acessos; i++) {
+    for (int i = 0; i < n_acessos; i++)
+    {
         acessar_memoria(&sim, 0, acessos[i]);
         exibir_memoria_fisica(&sim);
         sim.tempo_atual++;
