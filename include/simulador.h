@@ -15,6 +15,7 @@ typedef struct
 
     int total_acessos;
     int page_faults;
+    int hits;
 
     int algoritmo;
 } Simulador;

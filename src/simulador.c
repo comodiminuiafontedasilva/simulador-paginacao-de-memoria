@@ -112,6 +112,11 @@ int acessar_memoria(Simulador *sim, int pid, int endereco_virtual)
         carregar_pagina(sim, pid, pagina);
         sim->page_faults++;
     }
+    else
+    {
+        sim->hits++;
+        printf("t = %d: [HIT] Página %d do Processo %d está na memória.\n", sim->tempo_atual, pagina, pid);
+    }
 
     int frame = sim->processos[pid].tabela_paginas[pagina].frame;
     int endereco_fisico = frame * sim->tamanho_pagina + deslocamento;
