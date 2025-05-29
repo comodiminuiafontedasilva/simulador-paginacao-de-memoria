@@ -55,10 +55,10 @@ int carregar_pagina(Simulador *sim, int pid, int pagina)
     int frame_substituido;
     switch (sim->algoritmo)
     {
-    case 0: // FIFO
+    case 0:
         frame_substituido = substituir_pagina_fifo(sim);
         break;
-    case 3: // RANDOM
+    case 1:
         frame_substituido = substituir_pagina_random(sim);
         break;
     default:
