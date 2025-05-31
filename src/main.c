@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h> 
 #include "../include/simulador.h"
 #include "../include/processo.h"
 #include "../include/memoria_fisica.h"
@@ -27,6 +28,8 @@ int escolher_algoritmo()
 
 int main()
 {
+    srand((unsigned) time(NULL));
+    
     Simulador sim;
 
     sim.tamanho_pagina = 4096;
